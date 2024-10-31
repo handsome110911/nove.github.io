@@ -16,17 +16,16 @@
             margin: 0;
         }
 
-        /* 背景圖片和透明效果 */
+        /* 背景圖片和黑色透明遮罩效果 */
         .background-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('novebg.jpg') no-repeat center center fixed;
+            background: url('novebg.jpg') no-repeat center center fixed, rgba(0, 0, 0, 0.5); /* 黑色遮罩，圖片和黑色合併 */
             background-size: cover;
-            opacity: 0.5; /* 背景圖片不透明度 */
-            z-index: -2; /* 置於最底層 */
+            z-index: -2;
         }
 
         /* 大獎榜單樣式 */
@@ -293,10 +292,31 @@
             const listItem = document.createElement("li");
             listItem.textContent = `${name}: ${prize}`;
             leaderboardList.appendChild(listItem);
+
+            // 更新localStorage
+            saveLeaderboard();
+        }
+
+        function saveLeaderboard() {
+            const items = Array.from(document.getElementById("leaderboardList").children).map(item => item.textContent);
+            localStorage.setItem("leaderboard", JSON.stringify(items));
+        }
+
+        function loadLeaderboard() {
+            const savedItems = JSON.parse(localStorage.getItem("leaderboard"));
+            if (savedItems) {
+                const leaderboardList = document.getElementById("leaderboardList");
+                savedItems.forEach(itemText => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = itemText;
+                    leaderboardList.appendChild(listItem);
+                });
+            }
         }
 
         function resetLeaderboard() {
             document.getElementById("leaderboardList").innerHTML = "";
+            localStorage.removeItem("leaderboard"); // 清除 localStorage
         }
 
         function copyLeaderboard() {
@@ -307,6 +327,9 @@
                 alert("榜單內容已複製到剪貼簿！");
             });
         }
+
+        // 在頁面加載時載入榜單
+        window.onload = loadLeaderboard;
     </script>
 
 </body>
