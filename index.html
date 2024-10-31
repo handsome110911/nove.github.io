@@ -80,6 +80,22 @@
             opacity: 1;
         }
 
+        /* 中獎特效 */
+        .winner-effect {
+            animation: flash 0.5s infinite alternate, zoom 0.5s forwards;
+            color: yellow;
+        }
+
+        @keyframes flash {
+            0% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        @keyframes zoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
         .hidden {
             display: none;
         }
@@ -138,15 +154,23 @@
 
             let results = [];
             for (let i = 0; i < 10; i++) {
-                results.push(`第 ${i + 1} 次抽獎結果: ` + getPrize());
+                results.push({ text: `第 ${i + 1} 次抽獎結果: ` + getPrize(), isWinner: false });
             }
 
             results.forEach((result, index) => {
+                // 判斷是否為中獎
+                const isWinner = !result.text.includes("鳴謝惠顧") && !result.text.includes("再來一次");
+
                 // 創建結果的 <div> 元素
                 const resultDiv = document.createElement("div");
                 resultDiv.classList.add("result");
-                resultDiv.innerHTML = `<strong>${username} 的第 ${index + 1} 次抽獎結果：</strong> ${result}`;
+                resultDiv.innerHTML = `<strong>${username} 的第 ${index + 1} 次抽獎結果：</strong> ${result.text}`;
                 
+                // 添加中獎特效
+                if (isWinner) {
+                    resultDiv.classList.add("winner-effect");
+                }
+
                 // 延遲 0.3 秒顯示每個結果
                 setTimeout(() => {
                     resultDiv.classList.add("visible");
