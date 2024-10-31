@@ -80,20 +80,16 @@
             opacity: 1;
         }
 
-        /* 中獎特效 */
-        .winner-effect {
-            animation: flash 0.5s infinite alternate, zoom 0.5s forwards;
-            color: yellow;
+        /* 獎項1的特效 */
+        .special-winner {
+            font-size: 2em; /* 特大字體 */
+            color: #00aaff; /* 粉藍色 */
+            animation: specialFlash 0.5s infinite alternate;
         }
 
-        @keyframes flash {
+        @keyframes specialFlash {
             0% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        @keyframes zoom {
-            from { transform: scale(1); }
-            to { transform: scale(1.2); }
+            100% { opacity: 0.7; }
         }
 
         .hidden {
@@ -111,13 +107,16 @@
         <div class="input-container">
             <input type="text" id="username" placeholder="請輸入您的名稱">
         </div>
-        <button id="startButton" onclick="startDraw()">開始抽獎</button>
+        <button id="singleDrawButton" onclick="singleDraw()">抽獎一次</button>
+        <button id="tenDrawButton" onclick="startDraw(10)">開始抽獎十次</button>
         <div id="resultsContainer"></div>
-        <button class="hidden" id="tryAgainBtn" onclick="resetGame()">再來一次</button>
-        <button class="hidden" id="backBtn" onclick="goToMainPage()">回到主頁</button>
+        <button class="hidden" id="drawAgainButton" onclick="singleDraw(true)">原本名稱再抽一次</button>
+        <button class="hidden" id="drawTenAgainButton" onclick="startDraw(10, true)">再來十次</button>
     </div>
 
     <script>
+        let currentUsername = "";
+
         function getPrize() {
             const chance = Math.random() * 100;
 
@@ -137,65 +136,61 @@
             }
         }
 
-        function startDraw() {
-            const username = document.getElementById('username').value;
-            if (!username) {
-                alert("請先輸入您的名稱！");
-                return;
+        function displayResult(result, index) {
+            const resultDiv = document.createElement("div");
+            resultDiv.classList.add("result");
+            resultDiv.innerHTML = `<strong>${currentUsername} 的第 ${index + 1} 次抽獎結果：</strong> ${result}`;
+
+            // 如果是獎項1，加上特效
+            if (result.includes("獎項1")) {
+                resultDiv.classList.add("special-winner");
             }
 
-            // 禁用開始按鈕，防止重複點擊
-            const startButton = document.getElementById('startButton');
-            startButton.disabled = true;
+            setTimeout(() => {
+                resultDiv.classList.add("visible");
+            }, index * 300);
+
+            document.getElementById('resultsContainer').appendChild(resultDiv);
+        }
+
+        function startDraw(times, useCurrentName = false) {
+            if (!useCurrentName) {
+                currentUsername = document.getElementById('username').value;
+                if (!currentUsername) {
+                    alert("請先輸入您的名稱！");
+                    return;
+                }
+            }
+
+            // 禁用按鈕以防重複點擊
+            disableButtons();
 
             // 清空結果區域
             const resultsContainer = document.getElementById('resultsContainer');
             resultsContainer.innerHTML = "";
 
-            let results = [];
-            for (let i = 0; i < 10; i++) {
-                results.push({ text: `第 ${i + 1} 次抽獎結果: ` + getPrize(), isWinner: false });
+            // 進行多次抽獎並顯示結果
+            for (let i = 0; i < times; i++) {
+                const result = getPrize();
+                displayResult(result, i);
             }
 
-            results.forEach((result, index) => {
-                // 判斷是否為中獎
-                const isWinner = !result.text.includes("鳴謝惠顧") && !result.text.includes("再來一次");
-
-                // 創建結果的 <div> 元素
-                const resultDiv = document.createElement("div");
-                resultDiv.classList.add("result");
-                resultDiv.innerHTML = `<strong>${username} 的第 ${index + 1} 次抽獎結果：</strong> ${result.text}`;
-                
-                // 添加中獎特效
-                if (isWinner) {
-                    resultDiv.classList.add("winner-effect");
-                }
-
-                // 延遲 0.3 秒顯示每個結果
-                setTimeout(() => {
-                    resultDiv.classList.add("visible");
-                }, index * 300);
-                
-                resultsContainer.appendChild(resultDiv);
-            });
-
-            // 顯示 "再來一次" 和 "回到主頁" 按鈕
-            document.getElementById('tryAgainBtn').classList.remove('hidden');
-            document.getElementById('backBtn').classList.remove('hidden');
+            // 顯示「再來一次」和「再來十次」按鈕
+            document.getElementById('drawAgainButton').classList.remove('hidden');
+            document.getElementById('drawTenAgainButton').classList.remove('hidden');
         }
 
-        function resetGame() {
-            // 清空結果，重置按鈕狀態
-            document.getElementById('resultsContainer').innerHTML = "";
-            document.getElementById('tryAgainBtn').classList.add('hidden');
-            document.getElementById('backBtn').classList.add('hidden');
-            document.getElementById('username').value = "";
-            document.getElementById('startButton').disabled = false; // 重新啟用按鈕
+        function singleDraw(useCurrentName = false) {
+            startDraw(1, useCurrentName);
         }
 
-        function goToMainPage() {
-            alert("回到主頁");
-            resetGame();
+        function disableButtons() {
+            document.getElementById('singleDrawButton').disabled = true;
+            document.getElementById('tenDrawButton').disabled = true;
+            setTimeout(() => {
+                document.getElementById('singleDrawButton').disabled = false;
+                document.getElementById('tenDrawButton').disabled = false;
+            }, 2000); // 解鎖按鈕
         }
     </script>
 
