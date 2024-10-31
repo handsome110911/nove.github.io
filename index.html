@@ -148,16 +148,16 @@
             resultDiv.classList.add("result");
             resultDiv.innerHTML = `<strong>${currentUsername} 的第 ${index + 1} 次抽獎結果：</strong> ${result}`;
 
-            // 如果是大獎，加上特效
-            if (result.includes("大獎")) {
-                resultDiv.classList.add("special-winner");
-            }
-
             setTimeout(() => {
                 resultDiv.classList.add("visible");
 
-                // 如果是最後一個結果且是 "哈哈 沒抽到"，先顯示大獎特效再變灰
-                if (index === totalResults - 1 && result === "哈哈 沒抽到") {
+                // 如果是大獎，添加特效
+                if (result.includes("大獎")) {
+                    resultDiv.classList.add("special-winner");
+                }
+
+                // 如果是最後一個結果且是 "哈哈 沒抽到"，且有10%的機率觸發特效
+                if (index === totalResults - 1 && result === "哈哈 沒抽到" && Math.random() < 0.1) {
                     resultDiv.classList.add("special-winner");
                     setTimeout(() => {
                         resultDiv.classList.remove("special-winner");
