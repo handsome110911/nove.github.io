@@ -259,4 +259,38 @@
             // 禁用按鈕以防重複點擊
             disableButtons();
 
-           
+            // 清空結果區域
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = "";
+
+            // 進行多次抽獎並顯示結果
+            let results = [];
+            for (let i = 0; i < times; i++) {
+                results.push(getPrize());
+            }
+
+            results.forEach((result, index) => {
+                displayResult(result, index, results.length);
+            });
+
+            // 顯示「再來一次」和「再來十次」按鈕
+            document.getElementById('drawAgainButton').classList.remove('hidden');
+            document.getElementById('drawTenAgainButton').classList.remove('hidden');
+        }
+
+        function singleDraw(useCurrentName = false) {
+            startDraw(1, useCurrentName);
+        }
+
+        function disableButtons() {
+            document.getElementById('singleDrawButton').disabled = true;
+            document.getElementById('tenDrawButton').disabled = true;
+            setTimeout(() => {
+                document.getElementById('singleDrawButton').disabled = false;
+                document.getElementById('tenDrawButton').disabled = false;
+            }, 2000); // 解鎖按鈕
+        }
+    </script>
+
+</body>
+</html>
