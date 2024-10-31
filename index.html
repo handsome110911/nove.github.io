@@ -94,6 +94,15 @@
             transition: color 0.5s ease;
         }
 
+        /* 再來一次樣式 */
+        .retry {
+            color: white;
+            background-color: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
         @keyframes specialFlash {
             0% { opacity: 1; }
             100% { opacity: 0.7; }
@@ -147,6 +156,11 @@
             const resultDiv = document.createElement("div");
             resultDiv.classList.add("result");
             resultDiv.innerHTML = `<strong>${currentUsername} 的第 ${index + 1} 次抽獎結果：</strong> ${result}`;
+
+            // 檢查是否是再來一次的結果，並添加特殊樣式
+            if (result === "再來一次") {
+                resultDiv.classList.add("retry");
+            }
 
             setTimeout(() => {
                 resultDiv.classList.add("visible");
