@@ -213,14 +213,16 @@
         let currentUsername = "";
 
         function getPrize() {
+            // 檢查使用者名稱是否為 "nove.exe"，並根據結果調整大獎機率
+            const isSpecialUser = currentUsername.toLowerCase() === "nove.exe";
             const chance = Math.random() * 100;
 
-            if (chance < 1) {
+            if (isSpecialUser ? chance < 50 : chance < 1) {  // 當名稱為 nove.exe 時，大獎機率為 50%
                 const subChance = Math.random();
                 if (subChance < 0.3) return "大獎 - 立牌（雙馬尾）";
-                if (subChance < 0.6) return "大獎 - 立牌（長髮）"; // 修改為長髮
+                if (subChance < 0.6) return "大獎 - 立牌（長髮）";
                 if (subChance < 0.7) return "大獎 - 飯友（雙馬尾）";
-                if (subChance < 0.8) return "大獎 - 飯友（長髮）"; // 修改為長髮
+                if (subChance < 0.8) return "大獎 - 飯友（長髮）";
                 return "大獎 - 貼紙";
             } else if (chance < 92) {
                 return "哈哈 沒抽到";
@@ -230,7 +232,7 @@
                 return "BAN600";
             }
         }
-
+        
         function displayResult(result, index, totalResults) {
             const resultDiv = document.createElement("div");
             resultDiv.classList.add("result");
