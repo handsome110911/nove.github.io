@@ -253,4 +253,46 @@
             }
 
             results.forEach((result, index) => {
-                displayResult
+                displayResult(result, index, results.length);
+            });
+
+            document.getElementById('drawAgainButton').classList.remove('hidden');
+            document.getElementById('drawTenAgainButton').classList.remove('hidden');
+        }
+
+        function singleDraw(useCurrentName = false) {
+            startDraw(1, useCurrentName);
+        }
+
+        function disableButtons() {
+            document.getElementById('singleDrawButton').disabled = true;
+            document.getElementById('tenDrawButton').disabled = true;
+            setTimeout(() => {
+                document.getElementById('singleDrawButton').disabled = false;
+                document.getElementById('tenDrawButton').disabled = false;
+            }, 2000);
+        }
+
+        function updateLeaderboard(name, prize) {
+            const leaderboardList = document.getElementById("leaderboardList");
+            const listItem = document.createElement("li");
+            listItem.textContent = `${name}: ${prize}`;
+            leaderboardList.appendChild(listItem);
+        }
+
+        function resetLeaderboard() {
+            document.getElementById("leaderboardList").innerHTML = "";
+        }
+
+        function copyLeaderboard() {
+            const leaderboardText = Array.from(document.getElementById("leaderboardList").children)
+                .map(item => item.textContent)
+                .join("\n");
+            navigator.clipboard.writeText(leaderboardText).then(() => {
+                alert("榜單內容已複製到剪貼簿！");
+            });
+        }
+    </script>
+
+</body>
+</html>
