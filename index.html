@@ -80,11 +80,18 @@
             opacity: 1;
         }
 
-        /* 獎項1的特效 */
+        /* 大獎特效 */
         .special-winner {
             font-size: 2em; /* 特大字體 */
             color: #00aaff; /* 粉藍色 */
             animation: specialFlash 0.5s infinite alternate;
+        }
+
+        /* 哈哈 沒抽到特效 */
+        .gray-out {
+            color: #555; /* 黑灰色 */
+            animation: none;
+            transition: color 0.5s ease;
         }
 
         @keyframes specialFlash {
@@ -122,13 +129,13 @@
 
             if (chance < 1) {
                 const subChance = Math.random();
-                if (subChance < 0.3) return "獎項1 - 立牌（長髮）";
-                if (subChance < 0.6) return "獎項1 - 立牌（短髮）";
-                if (subChance < 0.7) return "獎項1 - 飯友（長髮）";
-                if (subChance < 0.8) return "獎項1 - 飯友（短髮）";
-                return "獎項1 - 貼紙";
+                if (subChance < 0.3) return "大獎 - 立牌（雙馬尾）";
+                if (subChance < 0.6) return "大獎 - 立牌（雙馬尾）";
+                if (subChance < 0.7) return "大獎 - 飯友（雙馬尾）";
+                if (subChance < 0.8) return "大獎 - 飯友（雙馬尾）";
+                return "大獎 - 貼紙";
             } else if (chance < 92) {
-                return "鳴謝惠顧";
+                return "哈哈 沒抽到";
             } else if (chance < 97) {
                 return "再來一次";
             } else {
@@ -136,18 +143,27 @@
             }
         }
 
-        function displayResult(result, index) {
+        function displayResult(result, index, totalResults) {
             const resultDiv = document.createElement("div");
             resultDiv.classList.add("result");
             resultDiv.innerHTML = `<strong>${currentUsername} 的第 ${index + 1} 次抽獎結果：</strong> ${result}`;
 
-            // 如果是獎項1，加上特效
-            if (result.includes("獎項1")) {
+            // 如果是大獎，加上特效
+            if (result.includes("大獎")) {
                 resultDiv.classList.add("special-winner");
             }
 
             setTimeout(() => {
                 resultDiv.classList.add("visible");
+
+                // 如果是最後一個結果且是 "哈哈 沒抽到"，先顯示大獎特效再變灰
+                if (index === totalResults - 1 && result === "哈哈 沒抽到") {
+                    resultDiv.classList.add("special-winner");
+                    setTimeout(() => {
+                        resultDiv.classList.remove("special-winner");
+                        resultDiv.classList.add("gray-out");
+                    }, 500);
+                }
             }, index * 300);
 
             document.getElementById('resultsContainer').appendChild(resultDiv);
@@ -170,10 +186,14 @@
             resultsContainer.innerHTML = "";
 
             // 進行多次抽獎並顯示結果
+            let results = [];
             for (let i = 0; i < times; i++) {
-                const result = getPrize();
-                displayResult(result, i);
+                results.push(getPrize());
             }
+
+            results.forEach((result, index) => {
+                displayResult(result, index, results.length);
+            });
 
             // 顯示「再來一次」和「再來十次」按鈕
             document.getElementById('drawAgainButton').classList.remove('hidden');
